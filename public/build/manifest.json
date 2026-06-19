@@ -1,0 +1,33 @@
+{
+  "node_modules/maplibre-gl/dist/maplibre-gl.css": {
+    "file": "assets/maplibre-gl-B2k4QVOw.css",
+    "src": "node_modules/maplibre-gl/dist/maplibre-gl.css"
+  },
+  "node_modules/maplibre-gl/dist/maplibre-gl.js": {
+    "file": "assets/maplibre-gl-BU2CkxBD.js",
+    "name": "maplibre-gl",
+    "src": "node_modules/maplibre-gl/dist/maplibre-gl.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DiPuzn0q.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-vxrdEstX.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/maplibre-gl/dist/maplibre-gl.js"
+    ]
+  }
+}
