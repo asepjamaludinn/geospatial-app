@@ -4,103 +4,207 @@
 @section('meta_description', 'Peta interaktif menampilkan data spasial titik dan garis menggunakan MapLibre GL JS dan OpenStreetMap.')
 
 @push('styles')
-    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.3.2/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        .maplibregl-popup-content {
+            border-radius: 0px !important;
+            box-shadow: 4px 4px 0px #000 !important;
+            border: 2px solid #000;
+            padding: 12px 16px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .maplibregl-popup-close-button {
+            font-size: 16px;
+            color: #000;
+        }
+    </style>
 @endpush
 
 @section('content')
-<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-    <div class="w-full mb-6 text-center">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Visualisasi Data Spasial</h1>
-        <p class="text-gray-500 mt-2">Menampilkan marker dan rute polylines berbasis OpenStreetMap.</p>
+<div class="flex flex-col items-start w-full max-w-5xl mx-auto">
+    
+    <div class="w-full mb-8 md:mb-12">
+        <h1 class="text-4xl md:text-6xl font-light text-gray-900 tracking-tighter leading-tight mb-4">
+            Spatial Data <br> Perspectives.
+        </h1>
+        <p class="text-lg text-gray-500 font-light tracking-tight max-w-2xl">
+            Interactive map implementation featuring custom markers, route tracing, and polygon zoning. Now with multiple basemap layers and 3D camera controls.
+        </p>
     </div>
     
-    <div class="w-full bg-white p-2 shadow-lg rounded-xl">
-        <div id="map" class="w-full h-[400px] md:h-[600px] rounded-lg"></div>
+    <div class="flex flex-col md:flex-row gap-6 mb-6 w-full bg-gray-50 p-5 rounded-xl border border-gray-200">
+        
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-1.5 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg>
+                <span class="text-xs font-bold tracking-widest uppercase">Map Style</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="switchLayer('street')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Street</button>
+                <button onclick="switchLayer('satellite')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Satellite</button>
+                <button onclick="switchLayer('dark')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Dark Mode</button>
+            </div>
+        </div>
+
+        <div class="hidden md:block w-px bg-gray-300 mt-2 mb-2"></div>
+
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-1.5 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span class="text-xs font-bold tracking-widest uppercase">Camera</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button id="btn-2d" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">2D Top-Down</button>
+                <button id="btn-3d" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">3D Perspective</button>
+            </div>
+        </div>
+
+        <div class="hidden md:block w-px bg-gray-300 mt-2 mb-2"></div>
+
+        <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-1.5 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span class="text-xs font-bold tracking-widest uppercase">Locations</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button id="btn-campus" class="px-4 py-1.5 border border-gray-900 rounded-md text-sm font-medium text-white bg-gray-900 hover:bg-black hover:border-black transition-all shadow-sm">Zoom Campus</button>
+                <button id="btn-route" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-900 bg-white hover:bg-gray-100 transition-all shadow-sm">View Route</button>
+            </div>
+        </div>
+
     </div>
+
+    <div class="w-full relative">
+        <div id="map" class="w-full h-[500px] md:h-[600px] rounded-xl border border-gray-200 shadow-lg overflow-hidden z-10"></div>
+    </div>
+
 </div>
 @endsection
 
 @push('scripts')
-<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.3.2/maplibre-gl.js"></script>
 <script>
+    let map; 
+
     document.addEventListener("DOMContentLoaded", () => {
-        // Inisialisasi Peta
-        const map = new maplibregl.Map({
+
+        map = new maplibregl.Map({
             container: 'map',
             style: {
                 'version': 8,
                 'sources': {
                     'osm-tiles': {
                         'type': 'raster',
-                        'tiles': [
-                            'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                        ],
-                        'tileSize': 256,
-                        'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                        'tileSize': 256
+                    },
+                    'sat-tiles': {
+                        'type': 'raster',
+                        'tiles': ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+                        'tileSize': 256
+                    },
+                    'dark-tiles': {
+                        'type': 'raster',
+                        'tiles': ['https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
+                        'tileSize': 256
                     }
                 },
                 'layers': [
-                    {
-                        'id': 'osm-layer',
-                        'type': 'raster',
-                        'source': 'osm-tiles',
-                        'minzoom': 0,
-                        'maxzoom': 19
-                    }
+                    { 'id': 'layer-street', 'type': 'raster', 'source': 'osm-tiles', 'layout': { 'visibility': 'visible' } },
+                    { 'id': 'layer-satellite', 'type': 'raster', 'source': 'sat-tiles', 'layout': { 'visibility': 'none' } },
+                    { 'id': 'layer-dark', 'type': 'raster', 'source': 'dark-tiles', 'layout': { 'visibility': 'none' } }
                 ]
             },
-            center: [107.6335, -6.9733], // Koordinat Area Bandung
-            zoom: 14
+            center: [107.6300, -6.9720],
+            zoom: 14.5,
+            pitch: 45 
         });
 
-        // Menambahkan Kontrol Navigasi
         map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
         map.on('load', () => {
-            // 1. Menambahkan Dummy Data: Marker (Point)
-            new maplibregl.Marker({ color: "#FF0000" })
+            
+            new maplibregl.Marker({ color: "#EF4444" })
                 .setLngLat([107.6335, -6.9733])
-                .setPopup(new maplibregl.Popup().setHTML("<b>Titik Pusat</b><br>Universitas Telkom"))
+                .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML("<b style='font-size:16px;'>Telkom University</b><br><span style='color:gray;'>Campus Center</span>"))
                 .addTo(map);
 
-            new maplibregl.Marker({ color: "#0000FF" })
+            new maplibregl.Marker({ color: "#3B82F6" })
                 .setLngLat([107.6250, -6.9700])
-                .setPopup(new maplibregl.Popup().setHTML("<b>Titik Kedua</b>"))
+                .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML("<b style='font-size:16px;'>Start Point</b><br><span style='color:gray;'>Route origin</span>"))
                 .addTo(map);
 
-            // 2. Menambahkan Dummy Data: Garis (LineString)
             map.addSource('route-dummy', {
                 'type': 'geojson',
                 'data': {
                     'type': 'Feature',
-                    'properties': {},
                     'geometry': {
                         'type': 'LineString',
-                        'coordinates': [
-                            [107.6250, -6.9700],
-                            [107.6280, -6.9720],
-                            [107.6335, -6.9733]
-                        ]
+                        'coordinates': [[107.6250, -6.9700], [107.6280, -6.9720], [107.6335, -6.9733]]
                     }
                 }
+            });
+
+            map.addSource('area-dummy', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': [[[107.6310, -6.9710], [107.6360, -6.9710], [107.6360, -6.9760], [107.6310, -6.9760], [107.6310, -6.9710]]]
+                    }
+                }
+            });
+
+            map.addLayer({
+                'id': 'area-fill',
+                'type': 'fill',
+                'source': 'area-dummy',
+                'paint': { 'fill-color': '#F59E0B', 'fill-opacity': 0.2 }
+            });
+
+            map.addLayer({
+                'id': 'area-outline',
+                'type': 'line',
+                'source': 'area-dummy',
+                'paint': { 'line-color': '#D97706', 'line-width': 2, 'line-dasharray': [2, 2] }
             });
 
             map.addLayer({
                 'id': 'route-line',
                 'type': 'line',
                 'source': 'route-dummy',
-                'layout': {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                'paint': {
-                    'line-color': '#10B981', // Emerald 500 Tailwind
-                    'line-width': 6
-                }
+                'layout': { 'line-join': 'round', 'line-cap': 'round' },
+                'paint': { 'line-color': '#10B981', 'line-width': 5 }
             });
         });
+
+        document.getElementById('btn-2d').addEventListener('click', () => {
+            map.easeTo({ pitch: 0, bearing: 0, duration: 1500 });
+        });
+
+        document.getElementById('btn-3d').addEventListener('click', () => {
+            map.easeTo({ pitch: 60, bearing: -20, duration: 1500 });
+        });
+
+        document.getElementById('btn-campus').addEventListener('click', () => {
+            map.flyTo({ center: [107.6335, -6.9733], zoom: 16.5, pitch: 60, bearing: -20, duration: 2500 });
+        });
+
+        document.getElementById('btn-route').addEventListener('click', () => {
+            map.flyTo({ center: [107.6250, -6.9700], zoom: 15.5, pitch: 30, duration: 2000 });
+        });
+
     });
+
+    window.switchLayer = function(layerType) {
+        if (!map) return;
+        
+        map.setLayoutProperty('layer-street', 'visibility', 'none');
+        map.setLayoutProperty('layer-satellite', 'visibility', 'none');
+        map.setLayoutProperty('layer-dark', 'visibility', 'none');
+
+        map.setLayoutProperty('layer-' + layerType, 'visibility', 'visible');
+    };
 </script>
 @endpush

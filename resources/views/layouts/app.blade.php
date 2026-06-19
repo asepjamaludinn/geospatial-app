@@ -9,23 +9,15 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased flex flex-col min-h-screen">
-    <nav class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex space-x-4 items-center">
-                    <a href="{{ route('home') }}" class="font-bold text-xl text-blue-600">Portofolio</a>
-                    <a href="{{ route('map') }}" class="text-gray-600 hover:text-blue-600 transition">Live Map</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-white text-gray-900 font-sans antialiased flex flex-col min-h-screen">
+    
+    @include('partials.navbar')
 
-    <main class="flex-grow">
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-16">
         @yield('content')
     </main>
 
-    <footer class="bg-gray-800 text-white text-center py-4 mt-8">
+    <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
         <p class="text-sm">&copy; {{ date('Y') }} Aplikasi Web Responsif.</p>
     </footer>
 
