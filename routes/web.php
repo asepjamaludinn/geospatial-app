@@ -1,23 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PageController;
 
-Route::get('/', function () {
-    $works = config('portfolio.works');
-    $visibleWorks = array_slice($works, 0, 5);
-
-    return view('home', [
-        'works' => $visibleWorks,
-        'totalWorks' => count($works),
-    ]);
-})->name('home');
-
-Route::get('/work', function () {
-    return view('work', [
-        'works' => config('portfolio.works'),
-    ]);
-})->name('work');
-
-Route::get('/map', function () {
-    return view('map');
-})->name('map');
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/work', [PageController::class, 'work'])->name('work');
+Route::get('/map', [PageController::class, 'map'])->name('map');

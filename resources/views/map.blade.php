@@ -3,10 +3,6 @@
 @section('title', 'Live Map Data | Web GIS')
 @section('meta_description', 'Peta interaktif menampilkan data spasial titik dan garis menggunakan MapLibre GL JS dan OpenStreetMap.')
 
-@push('styles')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.3.2/maplibre-gl.css" rel="stylesheet" />
-@endpush
-
 @section('content')
 <div class="flex flex-col items-start w-full max-w-5xl mx-auto">
     
@@ -27,9 +23,9 @@
                 <span class="text-xs font-bold tracking-widest uppercase">Map Style</span>
             </div>
             <div class="flex flex-wrap gap-2">
-                <button onclick="switchLayer('street')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Street</button>
-                <button onclick="switchLayer('satellite')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Satellite</button>
-                <button onclick="switchLayer('dark')" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Dark Mode</button>
+                <button id="btn-layer-street" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Street</button>
+                <button id="btn-layer-satellite" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Satellite</button>
+                <button id="btn-layer-dark" class="px-4 py-1.5 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-black hover:text-white hover:border-black transition-all">Dark Mode</button>
             </div>
         </div>
 
@@ -67,131 +63,3 @@
 
 </div>
 @endsection
-
-@push('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.3.2/maplibre-gl.js"></script>
-<script>
-    let map; 
-
-    document.addEventListener("DOMContentLoaded", () => {
-
-        map = new maplibregl.Map({
-            container: 'map',
-            style: {
-                'version': 8,
-                'sources': {
-                    'osm-tiles': {
-                        'type': 'raster',
-                        'tiles': ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-                        'tileSize': 256
-                    },
-                    'sat-tiles': {
-                        'type': 'raster',
-                        'tiles': ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
-                        'tileSize': 256
-                    },
-                    'dark-tiles': {
-                        'type': 'raster',
-                        'tiles': ['https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
-                        'tileSize': 256
-                    }
-                },
-                'layers': [
-                    { 'id': 'layer-street', 'type': 'raster', 'source': 'osm-tiles', 'layout': { 'visibility': 'visible' } },
-                    { 'id': 'layer-satellite', 'type': 'raster', 'source': 'sat-tiles', 'layout': { 'visibility': 'none' } },
-                    { 'id': 'layer-dark', 'type': 'raster', 'source': 'dark-tiles', 'layout': { 'visibility': 'none' } }
-                ]
-            },
-            center: [107.6300, -6.9720],
-            zoom: 14.5,
-            pitch: 45 
-        });
-
-        map.addControl(new maplibregl.NavigationControl(), 'top-right');
-
-        map.on('load', () => {
-            
-            new maplibregl.Marker({ color: "#EF4444" })
-                .setLngLat([107.6335, -6.9733])
-                .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML("<b style='font-size:16px;'>Telkom University</b><br><span style='color:gray;'>Campus Center</span>"))
-                .addTo(map);
-
-            new maplibregl.Marker({ color: "#3B82F6" })
-                .setLngLat([107.6250, -6.9700])
-                .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML("<b style='font-size:16px;'>Start Point</b><br><span style='color:gray;'>Route origin</span>"))
-                .addTo(map);
-
-            map.addSource('route-dummy', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'geometry': {
-                        'type': 'LineString',
-                        'coordinates': [[107.6250, -6.9700], [107.6280, -6.9720], [107.6335, -6.9733]]
-                    }
-                }
-            });
-
-            map.addSource('area-dummy', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'Feature',
-                    'geometry': {
-                        'type': 'Polygon',
-                        'coordinates': [[[107.6310, -6.9710], [107.6360, -6.9710], [107.6360, -6.9760], [107.6310, -6.9760], [107.6310, -6.9710]]]
-                    }
-                }
-            });
-
-            map.addLayer({
-                'id': 'area-fill',
-                'type': 'fill',
-                'source': 'area-dummy',
-                'paint': { 'fill-color': '#F59E0B', 'fill-opacity': 0.2 }
-            });
-
-            map.addLayer({
-                'id': 'area-outline',
-                'type': 'line',
-                'source': 'area-dummy',
-                'paint': { 'line-color': '#D97706', 'line-width': 2, 'line-dasharray': [2, 2] }
-            });
-
-            map.addLayer({
-                'id': 'route-line',
-                'type': 'line',
-                'source': 'route-dummy',
-                'layout': { 'line-join': 'round', 'line-cap': 'round' },
-                'paint': { 'line-color': '#10B981', 'line-width': 5 }
-            });
-        });
-
-        document.getElementById('btn-2d').addEventListener('click', () => {
-            map.easeTo({ pitch: 0, bearing: 0, duration: 1500 });
-        });
-
-        document.getElementById('btn-3d').addEventListener('click', () => {
-            map.easeTo({ pitch: 60, bearing: -20, duration: 1500 });
-        });
-
-        document.getElementById('btn-campus').addEventListener('click', () => {
-            map.flyTo({ center: [107.6335, -6.9733], zoom: 16.5, pitch: 60, bearing: -20, duration: 2500 });
-        });
-
-        document.getElementById('btn-route').addEventListener('click', () => {
-            map.flyTo({ center: [107.6250, -6.9700], zoom: 15.5, pitch: 30, duration: 2000 });
-        });
-
-    });
-
-    window.switchLayer = function(layerType) {
-        if (!map) return;
-        
-        map.setLayoutProperty('layer-street', 'visibility', 'none');
-        map.setLayoutProperty('layer-satellite', 'visibility', 'none');
-        map.setLayoutProperty('layer-dark', 'visibility', 'none');
-
-        map.setLayoutProperty('layer-' + layerType, 'visibility', 'visible');
-    };
-</script>
-@endpush

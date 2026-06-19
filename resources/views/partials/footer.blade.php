@@ -12,7 +12,7 @@
             </div>
 
             <div class="hidden md:block order-3 md:order-1 text-gray-600">
-                Portfolio for MAPID &copy;{{ date('Y') }}
+                MAPID &copy;{{ date('Y') }}
             </div>
         </div>
 
