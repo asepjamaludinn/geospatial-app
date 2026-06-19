@@ -5,19 +5,6 @@
 
 @push('styles')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.3.2/maplibre-gl.css" rel="stylesheet" />
-    <style>
-        .maplibregl-popup-content {
-            border-radius: 0px !important;
-            box-shadow: 4px 4px 0px #000 !important;
-            border: 2px solid #000;
-            padding: 12px 16px;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .maplibregl-popup-close-button {
-            font-size: 16px;
-            color: #000;
-        }
-    </style>
 @endpush
 
 @section('content')

@@ -6,3 +6,41 @@
         "DM Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+@layer components {
+    .maplibregl-popup-content {
+        @apply !rounded-none !shadow-[4px_4px_0px_#000] !border-2 !border-black !px-4 !py-3 !font-sans;
+    }
+    .maplibregl-popup-close-button {
+        @apply text-base text-black;
+    }
+
+    .premium-menu {
+        @apply fixed right-0 top-0 h-screen w-full max-w-sm bg-[#1C1D20] text-white z-[9999] translate-x-full invisible rounded-l-full;
+        transition:
+            transform 0.8s cubic-bezier(0.76, 0, 0.24, 1),
+            border-radius 0.8s cubic-bezier(0.76, 0, 0.24, 1),
+            visibility 0.8s;
+    }
+    .premium-menu.is-open {
+        @apply translate-x-0 visible rounded-l-none;
+    }
+    .premium-menu .menu-item {
+        @apply translate-x-20 opacity-0;
+        transition:
+            transform 0.6s cubic-bezier(0.76, 0, 0.24, 1),
+            opacity 0.6s ease;
+    }
+    .premium-menu.is-open .menu-item {
+        @apply translate-x-0 opacity-100;
+    }
+    .premium-menu.is-open .menu-item:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+    .premium-menu.is-open .menu-item:nth-child(2) {
+        transition-delay: 0.2s;
+    }
+    .premium-menu.is-open .menu-item:nth-child(3) {
+        transition-delay: 0.3s;
+    }
+}
