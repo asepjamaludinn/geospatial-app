@@ -17,9 +17,7 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
-        <p class="text-sm">&copy; {{ date('Y') }} Aplikasi Web Responsif.</p>
-    </footer>
+    @include('partials.footer')
 
     @stack('scripts')
 </body>

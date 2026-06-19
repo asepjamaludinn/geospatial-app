@@ -74,22 +74,27 @@
     
     <div class="flex items-start mb-6 md:mb-10">
         <h2 class="text-7xl md:text-[9rem] lg:text-[11.5rem] font-light tracking-tighter text-gray-900 leading-none -ml-1 md:-ml-2">Works</h2>
-        <span class="text-base md:text-lg font-medium text-gray-500 ml-2 mt-3 md:mt-32">/{{ count($allWorks) }}</span>
     </div>
 
     <div class="flex flex-col w-full">
         @foreach($visibleWorks as $work)
-        <a href="#" class="project-row group relative z-10 hover:z-50 grid grid-cols-1 md:grid-cols-12 items-end pt-10 md:pt-14 pb-2 md:pb-3 border-b border-gray-200 hover:bg-gray-50/50 transition-colors px-2 md:px-4 -mx-2 md:-mx-4 cursor-pointer">
+        <a href="#" class="project-row group relative z-10 hover:z-50 flex flex-col md:grid md:grid-cols-12 md:items-end pt-8 md:pt-14 pb-8 md:pb-3 border-b border-gray-200 hover:bg-gray-50/50 transition-colors px-0 md:px-4 -mx-0 md:-mx-4 cursor-pointer gap-2 md:gap-0">
             
+            <img 
+                src="{{ asset($work['image']) }}" 
+                alt="{{ $work['title'] }}"
+                class="block md:hidden w-full aspect-[4/3] object-cover rounded-sm mb-4 shadow-sm"
+            >
+
             <div class="md:col-span-3 text-sm text-gray-400 font-medium leading-none mb-1 md:mb-0 transition-colors group-hover:text-gray-900">
                 {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
             </div>
 
-            <div class="md:col-span-6 text-4xl md:text-[3.5rem] font-light text-gray-900 text-left md:text-center leading-none transition-all duration-300 group-hover:translate-x-4 md:group-hover:translate-x-0 md:group-hover:scale-[1.03]">
+            <div class="md:col-span-6 text-4xl md:text-[3.5rem] font-light text-gray-900 text-left md:text-center leading-none mb-1 md:mb-0">
                 {{ $work['title'] }}
             </div>
 
-            <div class="md:col-span-3 flex flex-row md:flex-col gap-2 items-start md:items-end mt-3 md:mt-0 text-xs md:text-sm font-normal tracking-[0.15em] text-gray-500 uppercase text-right leading-tight md:mb-1">
+            <div class="md:col-span-3 flex flex-row flex-wrap md:flex-col gap-x-3 gap-y-1 items-start md:items-end mt-2 md:mt-0 text-[0.65rem] md:text-sm font-normal tracking-[0.15em] text-gray-500 uppercase text-left md:text-right leading-tight md:mb-1">
                 @foreach($work['tags'] as $tag)
                     <span class="whitespace-nowrap">{{ $tag }}</span>
                 @endforeach
@@ -114,7 +119,7 @@
     </div>
     @endif
 
-</div>
+</div> 
 @endsection
 
 @push('scripts')

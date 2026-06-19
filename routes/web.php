@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/map', function () {
     return view('map');
 })->name('map');
+
+Route::get('/work', function () {
+    return view('work');
+})->name('work');
