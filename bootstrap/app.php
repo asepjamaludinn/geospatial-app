@@ -19,9 +19,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
     })->create();
-
-if (isset($_SERVER['APP_STORAGE'])) {
-    $app->useStoragePath($_SERVER['APP_STORAGE']);
+if (isset($_SERVER['LAMBDA_TASK_ROOT'])) {
+    $tmpPath = '/tmp/storage';
+    if (!is_dir($tmpPath)) mkdir($tmpPath, 0777, true);
+    
+    $app->useStoragePath($tmpPath);
 }
 
 return $app;
