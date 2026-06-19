@@ -14,17 +14,20 @@ foreach ($directories as $dir) {
     }
 }
 
-putenv("VIEW_COMPILED_PATH={$storagePath}/framework/views");
-putenv("SESSION_DRIVER=cookie");
-putenv("CACHE_STORE=array");
-putenv("LOG_CHANNEL=stderr");
-putenv("DB_CONNECTION=sqlite");
-putenv("DB_DATABASE=:memory:");
+$envVars = [
+    'APP_STORAGE' => $storagePath,
+    'VIEW_COMPILED_PATH' => $storagePath . '/framework/views',
+    'SESSION_DRIVER' => 'cookie',
+    'CACHE_STORE' => 'array',
+    'LOG_CHANNEL' => 'stderr',
+    'DB_CONNECTION' => 'sqlite',
+    'DB_DATABASE' => ':memory:',
+];
 
+foreach ($envVars as $key => $value) {
+    putenv("{$key}={$value}");
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
+}
 
-require __DIR__ . '/../vendor/autoload.php';
-$app = require_once __DIR__ . '/../bootstrap/app.php';
-
-$app->useStoragePath($storagePath);
-
-$app->handleRequest(Illuminate\Http\Request::capture());
+require __DIR__ . '/../public/index.php';
